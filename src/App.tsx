@@ -190,7 +190,7 @@ function App() {
             <div className="contact-info">
               <div className="contact-item">
                 <span className="contact-label">Email</span>
-                <a href="mailto:bochao@example.com">bochao@example.com</a>
+                <a href="mailto:bochaoxin@gmail.com">bochaoxin@gmail.com</a>
               </div>
               <div className="contact-item">
                 <span className="contact-label">LinkedIn</span>
