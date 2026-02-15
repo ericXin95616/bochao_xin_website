@@ -28,13 +28,20 @@ interface BlogPost {
   link: string
 }
 
-// LinkedIn Data
+// LinkedIn Data - Updated with real experience
 const projects: Project[] = [
   {
     id: 1,
-    title: 'Tesla Project',
-    description: 'Software development for Tesla vehicles',
-    technologies: ['Python', 'C++', 'Embedded Systems'],
+    title: 'Tesla Camera Software',
+    description: 'Camera software development for Tesla vehicles',
+    technologies: ['Python', 'C++', 'Embedded Systems', 'Computer Vision'],
+    github: 'https://github.com'
+  },
+  {
+    id: 2,
+    title: 'Robotics Application',
+    description: 'Robotics application development',
+    technologies: ['ROS', 'Python', 'Embedded Linux'],
     github: 'https://github.com'
   }
 ]
@@ -44,15 +51,29 @@ const experiences: Experience[] = [
     id: 1,
     company: 'Tesla',
     role: 'Senior Software Development Engineer',
-    duration: '2025 - Present',
-    description: 'Senior Software Development Engineer at Tesla working on vehicle software systems'
+    duration: 'Feb 2025 - Present',
+    description: 'Working on vehicle software systems at Tesla'
   },
   {
     id: 2,
-    company: 'Various Companies',
-    role: 'Software Engineer',
-    duration: 'Before Tesla',
-    description: 'Software development experience in mobile and web applications'
+    company: 'Tesla',
+    role: 'Camera Software Engineer',
+    duration: 'Jan 2023 - Jan 2025',
+    description: 'Camera software engineering for Tesla vehicles'
+  },
+  {
+    id: 3,
+    company: 'Brain Corp',
+    role: 'Software Engineering - Robotics Application Internship',
+    duration: 'Jun 2022 - Sep 2022',
+    description: 'Improved customized kernel driver module for GMSL cameras on Nvidia platforms. Worked on Embedded Linux and robotics applications.'
+  },
+  {
+    id: 4,
+    company: 'Amazon',
+    role: 'Software Development Engineer Internship',
+    duration: 'Jun 2020 - Sep 2020',
+    description: 'Worked in the simulation team of Amazon Astro project. C/C++ development.'
   }
 ]
 
@@ -66,9 +87,9 @@ const blogPosts: BlogPost[] = [
   },
   {
     id: 2,
-    title: 'Computer Vision Projects',
+    title: 'Computer Vision in Automotive',
     date: '2024-12-10',
-    excerpt: 'Exploring computer vision and embedded systems',
+    excerpt: 'Exploring computer vision and embedded systems in autonomous vehicles',
     link: '#'
   }
 ]
@@ -132,7 +153,7 @@ function App() {
             <div className="resume-section">
               <h2>Skills</h2>
               <div className="skills-grid">
-                {['Mobile Development', 'Software Testing', 'SaaS', 'Web Development', 'iOS', 'Python', 'C++', 'Computer Vision', 'Embedded Systems'].map((skill) => (
+                {['Mobile Development', 'Software Testing', 'SaaS', 'Web Development', 'iOS', 'Python', 'C/C++', 'Computer Vision', 'Embedded Systems', 'ROS', 'Embedded Linux'].map((skill) => (
                   <span key={skill} className="skill-item">{skill}</span>
                 ))}
               </div>
