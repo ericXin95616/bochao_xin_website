@@ -219,9 +219,6 @@ function App() {
           </div>
         )
         
-      case 'contact':
-        return null
-        
       default:
         return (
           <div className="section-content home-content">
