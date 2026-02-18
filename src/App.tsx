@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import emailjs from '@emailjs/browser'
 import './App.css'
 import profileImage from './assets/profile.jpg'
 
@@ -95,7 +96,7 @@ const blogPosts: BlogPost[] = [
 ]
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'home' | 'resume' | 'projects' | 'blog' | 'contact'>('home')
+  const [activeTab, setActiveTab] = useState<'home' | 'resume' | 'projects' | 'blog'>('home')
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
@@ -103,12 +104,27 @@ function App() {
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
-    setTimeout(() => {
+    setSubmitStatus('idle')
+    try {
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        {
+          from_name: contactForm.name,
+          from_email: contactForm.email,
+          message: contactForm.message,
+        },
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      )
       setSubmitStatus('success')
       setContactForm({ name: '', email: '', message: '' })
-      setIsSubmitting(false)
+      setTimeout(() => setSubmitStatus('idle'), 4000)
+    } catch {
+      setSubmitStatus('error')
       setTimeout(() => setSubmitStatus('idle'), 3000)
-    }, 1000)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const renderContent = () => {
@@ -204,61 +220,7 @@ function App() {
         )
         
       case 'contact':
-        return (
-          <div className="section-content">
-            <h2>Get In Touch</h2>
-            
-            <div className="contact-info">
-              <div className="contact-item">
-                <span className="contact-label">Email</span>
-                <a href="mailto:bochaoxin@gmail.com">bochaoxin@gmail.com</a>
-              </div>
-              <div className="contact-item">
-                <span className="contact-label">LinkedIn</span>
-                <a href="https://linkedin.com/in/bochao-xin" target="_blank" rel="noopener noreferrer">linkedin.com/in/bochao-xin</a>
-              </div>
-            </div>
-            
-            <div className="social-links">
-              <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="social-link">
-                GitHub
-              </a>
-              <a href="https://linkedin.com/in/bochao-xin" target="_blank" rel="noopener noreferrer" className="social-link">
-                LinkedIn
-              </a>
-            </div>
-            
-            <form className="contact-form" onSubmit={handleContactSubmit}>
-              <input
-                type="text"
-                placeholder="Name"
-                value={contactForm.name}
-                onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
-                required
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                value={contactForm.email}
-                onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
-                required
-              />
-              <textarea
-                placeholder="Message"
-                value={contactForm.message}
-                onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
-                required
-                rows={4}
-              />
-              <button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Sending...' : 'Send Message'}
-              </button>
-              {submitStatus === 'success' && (
-                <p className="form-success">Message sent!</p>
-              )}
-            </form>
-          </div>
-        )
+        return null
         
       default:
         return (
@@ -272,6 +234,60 @@ function App() {
               I graduated from UC Davis with High Honor in Computer Science & Engineering. 
               I'm passionate about Robotic Systems, Computer Vision, and Embedded Systems.
             </p>
+
+            <div className="home-contact-section">
+              <h2>Get In Touch</h2>
+              
+              <div className="contact-info">
+                <div className="contact-item">
+                  <span className="contact-label">Email</span>
+                  <a href="mailto:bochaoxin@gmail.com">bochaoxin@gmail.com</a>
+                </div>
+                <div className="contact-item">
+                  <span className="contact-label">LinkedIn</span>
+                  <a href="https://linkedin.com/in/bochao-xin" target="_blank" rel="noopener noreferrer">linkedin.com/in/bochao-xin</a>
+                </div>
+              </div>
+              
+              <div className="social-links">
+                <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="social-link">
+                  GitHub
+                </a>
+                <a href="https://linkedin.com/in/bochao-xin" target="_blank" rel="noopener noreferrer" className="social-link">
+                  LinkedIn
+                </a>
+              </div>
+              
+              <form className="contact-form" onSubmit={handleContactSubmit}>
+                <input
+                  type="text"
+                  placeholder="Name"
+                  value={contactForm.name}
+                  onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                  required
+                />
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={contactForm.email}
+                  onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                  required
+                />
+                <textarea
+                  placeholder="Message"
+                  value={contactForm.message}
+                  onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                  required
+                  rows={4}
+                />
+                <button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
+                </button>
+                {submitStatus === 'error' && (
+                  <p className="form-error">Failed to send. Please try again.</p>
+                )}
+              </form>
+            </div>
           </div>
         )
     }
@@ -279,41 +295,8 @@ function App() {
 
   return (
     <div className="app">
-      {/* Navigation Circles */}
-      <nav className="nav-circles">
-        <button 
-          className={`nav-circle ${activeTab === 'resume' ? 'active' : ''}`}
-          onClick={() => setActiveTab('resume')}
-        >
-          Resume
-        </button>
-        <button 
-          className={`nav-circle projects ${activeTab === 'projects' ? 'active' : ''}`}
-          onClick={() => setActiveTab('projects')}
-        >
-          Projects
-        </button>
-        <button 
-          className={`nav-circle blog ${activeTab === 'blog' ? 'active' : ''}`}
-          onClick={() => setActiveTab('blog')}
-        >
-          Blog
-        </button>
-        <button 
-          className={`nav-circle contact ${activeTab === 'contact' ? 'active' : ''}`}
-          onClick={() => setActiveTab('contact')}
-        >
-          Contact
-        </button>
-      </nav>
-
-      {/* Main Content */}
-      <main className="main-content">
-        {renderContent()}
-      </main>
-
-      {/* Profile Image */}
-      <div className="profile-section">
+      {/* Profile Section / Sidebar */}
+      <div className="profile-section" onClick={() => setActiveTab('home')} style={{ cursor: 'pointer' }}>
         <div className="profile-image">
           <img src={profileImage} alt="Bochao Xin" />
         </div>
@@ -321,10 +304,55 @@ function App() {
         <p className="profile-title">Senior Software Engineer @ Tesla | MSCS @ Columbia</p>
       </div>
 
+      {/* Navigation Circles */}
+      <nav className="nav-circles">
+        <div className="content-centered nav-circles-inner">
+          <button 
+            className={`nav-circle ${activeTab === 'resume' ? 'active' : ''}`}
+            onClick={() => setActiveTab('resume')}
+          >
+            Resume
+          </button>
+          <button 
+            className={`nav-circle projects ${activeTab === 'projects' ? 'active' : ''}`}
+            onClick={() => setActiveTab('projects')}
+          >
+            Projects
+          </button>
+          <button 
+            className={`nav-circle blog ${activeTab === 'blog' ? 'active' : ''}`}
+            onClick={() => setActiveTab('blog')}
+          >
+            Blog
+          </button>
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <main className="main-content">
+        <div className="content-centered">
+          {renderContent()}
+        </div>
+      </main>
+
       {/* Footer */}
       <footer className="footer">
-        <p>© {new Date().getFullYear()} Bochao Xin</p>
+        <div className="content-centered">
+          <p>© {new Date().getFullYear()} Bochao Xin. All rights reserved.</p>
+        </div>
       </footer>
+
+      {/* Success Popup */}
+      {submitStatus === 'success' && (
+        <div className="popup-overlay" onClick={() => setSubmitStatus('idle')}>
+          <div className="popup-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="popup-checkmark">✓</div>
+            <h3>Message Sent!</h3>
+            <p>Thank you for reaching out. I'll get back to you soon.</p>
+            <button className="popup-close" onClick={() => setSubmitStatus('idle')}>OK</button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
